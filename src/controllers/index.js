@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
 import { WebSocketServer } from 'ws';
+import {UsersService} from "../services/user.js";
 
 export const httpServer = http.createServer(function (req, res) {
     const __dirname = path.resolve(path.dirname(''));
@@ -18,41 +19,31 @@ export const httpServer = http.createServer(function (req, res) {
 });
 const wss = new WebSocketServer({ server: httpServer });
 
+const usersService = new UsersService()
 
-/*
 const wsHandlers = {
-    reg: userService.reg
+    reg: usersService.register.bind(usersService),
 }
-*/
 
 wss.on('connection', (ws) => {
+    ws.id = crypto.randomUUID();
+
     ws.on('message', (message) => {
-
         const req = JSON.parse(message);
-        req.data = JSON.parse(req.data);
+        req.data = JSON.parse(req.data || '{}');
 
-        /*const handler = wsHandlers[req.type]
-        if (!handler) {
-            throw new Error(`Bla`);
+        const handler = wsHandlers[req.type]
+        if (handler) {
+            const result = handler(req.data, ws.id)
+            ws.send(JSON.stringify({
+                type: req.type,
+                data: JSON.stringify(result),
+                id: 0
+            }));
+        } else {
+            const user = usersService.getUserByWsId(ws.id)
+            console.log(`Received from user ${user.index}:`, req);
         }
-        const res = handler(req.data)
-        res.data = JSON.stringify(res.data)
-        ws.send(JSON.stringify(res))
-*/
-
-
-        console.log(`Received:`, req);
-
-        ws.send(JSON.stringify({
-            type: req.type,
-            data: JSON.stringify({
-                name: req.data.name,
-                index: 1,
-                error: false,
-                errorText: ''
-            }),
-            id: 0
-        }));
     });
     ws.send('Secure connection established!');
 });

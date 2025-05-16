@@ -1,4 +1,4 @@
-import { httpServer } from "./src/controller/index.js";
+import { httpServer } from "./src/controllers/index.js";
 
 const HTTP_PORT = 3000;
 

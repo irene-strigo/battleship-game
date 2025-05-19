@@ -1,5 +1,5 @@
 import {Repository} from "./repository.js";
 
-export class UsersRepository extends Repository {
+class UsersRepository extends Repository {}
 
-}
+export default new UsersRepository()

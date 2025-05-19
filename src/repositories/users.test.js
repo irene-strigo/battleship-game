@@ -1,19 +1,9 @@
-import {UsersRepository} from "./users.js";
+import UsersRepository from "./users.js";
 
 describe('users repo', () => {
-    test('should create singleton repo', () => {
-        const instanceOne = new UsersRepository()
-        const instanceTwo = new UsersRepository()
-
-        expect(instanceOne).toBeInstanceOf(UsersRepository)
-        expect(instanceTwo).toBeInstanceOf(UsersRepository)
-        expect(instanceOne).toBe(instanceTwo)
-    });
-
     test('should add user', () => {
         const user = {name: 'John', password: '123456'};
-        const usersRepo = new UsersRepository()
-        const savedUser = usersRepo.insert(user)
+        const savedUser = UsersRepository.insert(user)
 
         expect(savedUser).toMatchObject(user)
         expect(savedUser.index).toBe(1)
@@ -21,9 +11,8 @@ describe('users repo', () => {
 
     test('should add many users', () => {
         const user = {name: 'John', password: '123456'};
-        const usersRepo = new UsersRepository()
-        const savedUser1 = usersRepo.insert(user)
-        const savedUser2 = usersRepo.insert(user)
+        const savedUser1 = UsersRepository.insert(user)
+        const savedUser2 = UsersRepository.insert(user)
 
         expect(savedUser1).toMatchObject(user)
         expect(savedUser1.index).toBe(2)
@@ -33,42 +22,36 @@ describe('users repo', () => {
     });
 
     test('should return all users', () => {
-        const usersRepo = new UsersRepository()
-        const users = usersRepo.list()
+        const users = UsersRepository.list()
         expect(users).toHaveLength(3)
     });
 
     test('should return user by PK', () => {
-        const usersRepo = new UsersRepository()
-        const user = usersRepo.getByPk(1)
+        const user = UsersRepository.getByPk(1)
         expect(user.index).toBe(1)
     });
 
     test('should return undefined if user not found by PK', () => {
-        const usersRepo = new UsersRepository()
-        const user = usersRepo.getByPk(1231)
+        const user = UsersRepository.getByPk(1231)
         expect(user).toBe(undefined)
     });
 
     test('should update user by PK', () => {
-        const usersRepo = new UsersRepository()
-        const user = usersRepo.update(1, {name: 'Vassiliy'})
+        const user = UsersRepository.update(1, {name: 'Vassiliy'})
         expect(user.index).toBe(1)
         expect(user.name).toBe('Vassiliy')
         expect(user.password).toBe('123456')
     });
 
     test('should return undefined if try to update user with unexistent PK', () => {
-        const usersRepo = new UsersRepository()
-        const user = usersRepo.update(123, {name: 'Vassiliy'})
+        const user = UsersRepository.update(123, {name: 'Vassiliy'})
         expect(user).toBe(undefined)
     });
 
     test('should delete user by PK', () => {
-        const usersRepo = new UsersRepository()
-        usersRepo.delete(1)
+        UsersRepository.delete(1)
 
-        const users = usersRepo.list()
+        const users = UsersRepository.list()
         expect(users).toHaveLength(2)
 
         const indexes = users.map(user => user.index)
@@ -76,10 +59,9 @@ describe('users repo', () => {
     });
 
     test('should not delete user with unexistent PK', () => {
-        const usersRepo = new UsersRepository()
-        usersRepo.delete(123)
+        UsersRepository.delete(123)
 
-        const users = usersRepo.list()
+        const users = UsersRepository.list()
         expect(users).toHaveLength(2)
 
         const indexes = users.map(user => user.index)

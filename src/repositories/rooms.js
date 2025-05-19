@@ -1,5 +1,9 @@
 import {Repository} from "./repository.js";
 
 export class RoomsRepository extends Repository {
-    primaryKeyField = 'indexRoom'
+    get primaryKeyField () {
+        return 'indexRoom'
+    }
 }
+
+export default new RoomsRepository()

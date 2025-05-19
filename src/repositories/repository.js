@@ -1,15 +1,12 @@
 export class Repository {
     storage = []
 
-    primaryKeyField = 'index'
+    constructor() {
 
-    constructor(){
-        if (Repository._instance) {
-            return Repository._instance
-        }
-        Repository._instance = this;
+    }
 
-        this.storage = []
+    get primaryKeyField () {
+        return 'index'
     }
 
     insert(entity){
@@ -22,9 +19,14 @@ export class Repository {
         return this.storage.map(item => ({...item}))
     }
 
-    getByPk(primaryKey){
-        const entity = this.storage.find(item => item[this.primaryKeyField] === primaryKey)
-        return entity ? {... entity} : undefined
+    getByPk(primaryKeyValue){
+        const items = this.getAllByFieldValue(this.primaryKeyField, primaryKeyValue)
+        return items.length ? items[0] : undefined
+    }
+
+    getAllByFieldValue(field, value){
+        const entities = this.storage.filter(item => item[field] === value)
+        return entities.map(item => ({...item}))
     }
 
     update(primaryKey, partialEntity) {
